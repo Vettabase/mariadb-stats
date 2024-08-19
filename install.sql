@@ -13,6 +13,14 @@
 */
 
 
+CREATE OR REPLACE SCHEMA stats
+    DEFAULT CHARACTER SET 'ascii'
+    DEFAULT COLLATE 'ascii_bin'
+    COMMENT 'MariaDB Statistics Library\nProject URL: https://github.com/Vettabase/mariadb-stats'
+;
+USE stats;
+
+
 DELIMITER ||
 
     CREATE OR REPLACE AGGREGATE FUNCTION geometric_mean(item FLOAT)
