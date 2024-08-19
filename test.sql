@@ -13,6 +13,48 @@
 */
 
 
+-- weighted_avg()
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+-- Expected Result: NULL
+SELECT weighted_avg(i, 1) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT, w FLOAT);
+-- Expected Result: 1
+INSERT INTO t VALUES (1, 1), (NULL, 1);
+SELECT weighted_avg(i, 1) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT, w FLOAT);
+-- Expected Result: 1
+INSERT INTO t VALUES (1, 1), (1, NULL);
+SELECT weighted_avg(i, 1) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1), (5), (2), (4);
+-- Expected Result: 0
+SELECT weighted_avg(i, 0) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1), (5), (2), (4);
+-- Expected Result: 3
+SELECT weighted_avg(i, 1) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (-1), (-5), (-2), (-4);
+-- Expected Result: -3
+SELECT weighted_avg(i, 1) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT, w FLOAT);
+INSERT INTO t VALUES (1, 1), (3, 1), (10, 0);
+-- Expected Result: 2
+SELECT weighted_avg(i, w) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT, w FLOAT);
+INSERT INTO t VALUES (1, 3), (3, 1);
+-- Expected Result: 1.5
+SELECT weighted_avg(i, w) FROM t;
+
+
 -- geometric_mean()
 
 CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);

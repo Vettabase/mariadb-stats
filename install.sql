@@ -23,6 +23,31 @@ USE stats;
 
 DELIMITER ||
 
+    CREATE OR REPLACE AGGREGATE FUNCTION weighted_avg(item FLOAT, weight FLOAT)
+        RETURNS FLOAT
+        NOT DETERMINISTIC
+        READS SQL DATA
+    BEGIN
+        DECLARE part FLOAT DEFAULT 0;
+        DECLARE weight_sum FLOAT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND
+            RETURN part / weight_sum;
+        lp_main: LOOP
+            FETCH GROUP NEXT ROW;
+            IF item IS NULL OR weight IS NULL THEN
+                ITERATE lp_main;
+            END IF;
+            SET part := part + (item * weight);
+            SET weight_sum := weight_sum + weight;
+        END LOOP;
+    END;
+
+||
+DELIMITER ;
+
+
+DELIMITER ||
+
     CREATE OR REPLACE AGGREGATE FUNCTION geometric_mean(item FLOAT)
         RETURNS FLOAT
         NOT DETERMINISTIC
