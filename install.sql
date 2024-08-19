@@ -17,6 +17,8 @@ DELIMITER ||
 
     CREATE OR REPLACE AGGREGATE FUNCTION geometric_mean(item FLOAT)
         RETURNS FLOAT
+        NOT DETERMINISTIC
+        READS SQL DATA
     BEGIN
         DECLARE part FLOAT DEFAULT 1;
         DECLARE weight_sum FLOAT DEFAULT 0;
@@ -48,6 +50,8 @@ DELIMITER ||
             weight FLOAT
         )
         RETURNS FLOAT
+        NOT DETERMINISTIC
+        READS SQL DATA
     BEGIN
         DECLARE part FLOAT DEFAULT 1;
         DECLARE weight_sum FLOAT DEFAULT 0;
