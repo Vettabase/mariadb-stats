@@ -24,6 +24,21 @@ INSERT INTO t VALUES (1.05), (1.03), (1.06), (1.02), (1.04);
 -- Expected Result: 1.0399
 SELECT geometric_mean(i) FROM t;
 
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1.05), (NULL), (1.03), (1.06), (1.02), (1.04);
+-- Expected Result: NULL
+SELECT geometric_mean(i) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1.05), (0), (1.03), (1.06), (1.02), (1.04);
+-- Expected Error: ERROR 30001 (45000): One of the observation is zero or less
+SELECT geometric_mean(i) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1.05), (-0.1), (1.03), (1.06), (1.02), (1.04);
+-- Expected Error: ERROR 30001 (45000): One of the observation is zero or less
+SELECT geometric_mean(i) FROM t;
+
 
 -- weighted_geometric_mean()
 

@@ -22,8 +22,16 @@ DELIMITER ||
         DECLARE weight_sum FLOAT DEFAULT 0;
         DECLARE CONTINUE HANDLER FOR NOT FOUND
             RETURN POW(part, 1 / weight_sum);
-        LOOP
+        lp_main: LOOP
             FETCH GROUP NEXT ROW;
+            IF item IS NULL THEN
+                ITERATE lp_main;
+            ELSEIF item <= 0 THEN
+                SIGNAL SQLSTATE '45000' SET
+                    MYSQL_ERRNO=30001,
+                    MESSAGE_TEXT='One of the observation is zero or less'
+                ;
+            END IF;
             SET part := part * item;
             SET weight_sum := weight_sum + 1;
         END LOOP;
