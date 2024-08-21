@@ -73,12 +73,12 @@ SELECT geometric_mean(i) FROM t;
 
 CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
 INSERT INTO t VALUES (1.05), (0), (1.03), (1.06), (1.02), (1.04);
--- Expected Error: ERROR 30001 (45000): One of the observation is zero or less
+-- Expected Error: ERROR 30001 (45000): One of the observations is zero or less
 SELECT geometric_mean(i) FROM t;
 
 CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
 INSERT INTO t VALUES (1.05), (-0.1), (1.03), (1.06), (1.02), (1.04);
--- Expected Error: ERROR 30001 (45000): One of the observation is zero or less
+-- Expected Error: ERROR 30001 (45000): One of the observations is zero or less
 SELECT geometric_mean(i) FROM t;
 
 
@@ -92,3 +92,25 @@ CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT, w FLOAT);
 INSERT INTO t VALUES (1, 2), (2, 5), (3, 6), (4, 4), (5, 3);
 -- Expected Result: 2.77748
 SELECT weighted_geometric_mean(i, w) FROM t;
+
+
+-- harmonic_mean()
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+-- Expected Result: NULL
+SELECT harmonic_mean(i) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1);
+-- Expected Result: 1
+SELECT harmonic_mean(i) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (0);
+-- Expected Error: ERROR 30001 (45000): One of the observations is zero or less
+SELECT harmonic_mean(i) FROM t;
+
+CREATE OR REPLACE TEMPORARY TABLE t (i FLOAT);
+INSERT INTO t VALUES (1), (3), (5);
+-- Expected Result: 1.95652
+SELECT harmonic_mean(i) FROM t;

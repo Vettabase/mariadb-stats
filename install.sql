@@ -64,7 +64,7 @@ DELIMITER ||
             ELSEIF item <= 0 THEN
                 SIGNAL SQLSTATE '45000' SET
                     MYSQL_ERRNO=30001,
-                    MESSAGE_TEXT='One of the observation is zero or less'
+                    MESSAGE_TEXT='One of the observations is zero or less'
                 ;
             END IF;
             SET part := part * item;
@@ -94,6 +94,36 @@ DELIMITER ||
             FETCH GROUP NEXT ROW;
             SET part := part * POW(item, weight);
             SET weight_sum := weight_sum + weight;
+        END LOOP;
+    END;
+
+||
+DELIMITER ;
+
+
+DELIMITER ||
+
+    CREATE OR REPLACE AGGREGATE FUNCTION harmonic_mean(item FLOAT)
+        RETURNS FLOAT
+        NOT DETERMINISTIC
+        READS SQL DATA
+    BEGIN
+        DECLARE part FLOAT DEFAULT 0;
+        DECLARE weight_sum FLOAT DEFAULT 0;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND
+            RETURN weight_sum / part;
+        lp_main: LOOP
+            FETCH GROUP NEXT ROW;
+            IF item IS NULL THEN
+                ITERATE lp_main;
+            ELSEIF item <= 0 THEN
+                SIGNAL SQLSTATE '45000' SET
+                    MYSQL_ERRNO=30001,
+                    MESSAGE_TEXT='One of the observations is zero or less'
+                ;
+            END IF;
+            SET part := part + 1 / item;
+            SET weight_sum := weight_sum + 1;
         END LOOP;
     END;
 
